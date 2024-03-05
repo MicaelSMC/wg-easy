@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          repository: MicaelSMC/wg-easy
+          repository: micaelsmc/wg-easy
           ref: master
       - name: Setup Node
         uses: actions/setup-node@v4
