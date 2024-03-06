@@ -116,8 +116,8 @@ PostDown = ${WG_POST_DOWN}
 # Client: ${client.name} (${clientId})
 [Peer]
 PublicKey = ${client.publicKey}
-PresharedKey = ${client.preSharedKey}
-AllowedIPs = ${client.address}/32`;
+${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
+}AllowedIPs = ${client.address}/32`;
     }
 
     debug('Config saving...');
@@ -143,6 +143,7 @@ AllowedIPs = ${client.address}/32`;
       name: client.name,
       enabled: client.enabled,
       address: client.address,
+      cidrBlock: client.cidrBlock,
       publicKey: client.publicKey,
       createdAt: new Date(client.createdAt),
       updatedAt: new Date(client.updatedAt),
@@ -204,14 +205,14 @@ AllowedIPs = ${client.address}/32`;
 
     return `[Interface]
 PrivateKey = ${client.privateKey}
-Address = ${client.address}/24
+Address = ${client.address}/${client.cidrBlock}
 ${WG_DEFAULT_DNS ? `DNS = ${WG_DEFAULT_DNS}\n` : ''}\
 ${WG_MTU ? `MTU = ${WG_MTU}\n` : ''}\
 
 [Peer]
 PublicKey = ${config.server.publicKey}
-PresharedKey = ${client.preSharedKey}
-AllowedIPs = ${WG_ALLOWED_IPS}
+${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
+}AllowedIPs = ${WG_ALLOWED_IPS}
 PersistentKeepalive = ${WG_PERSISTENT_KEEPALIVE}
 Endpoint = ${WG_HOST}:${WG_PORT}`;
   }
@@ -255,10 +256,12 @@ Endpoint = ${WG_HOST}:${WG_PORT}`;
 
     // Create Client
     const id = uuid.v4();
+    const cidrBlock = WG_DEFAULT_ADDRESS_RANGE;
     const client = {
       id,
       name,
       address,
+      cidrBlock,
       privateKey,
       publicKey,
       preSharedKey,
@@ -323,6 +326,11 @@ Endpoint = ${WG_HOST}:${WG_PORT}`;
     client.updatedAt = new Date();
 
     await this.saveConfig();
+  }
+
+  // Shutdown wireguard
+  async Shutdown() {
+    await Util.exec('wg-quick down wg0').catch(() => { });
   }
 
 };
