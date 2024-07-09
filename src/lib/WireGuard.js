@@ -55,7 +55,7 @@ module.exports = class WireGuard {
               privateKey,
               publicKey,
               address,
-              cidrSubnet
+              cidrSubnet,
             },
             clients: {}
           };
@@ -68,10 +68,10 @@ module.exports = class WireGuard {
           if (
             err &&
             err.message &&
-            err.message.includes('Cannot find device 'wg0'')
+            err.message.includes('Cannot find device "wg0"')
           ) {
             throw new Error(
-              'WireGuard exited with the error: Cannot find device 'wg0'\nThis usually means that your host\'s kernel does not support WireGuard!'
+              'WireGuard exited with the error: Cannot find device "wg0"\nThis usually means that your host\'s kernel does not support WireGuard!'
             );
           }
 
