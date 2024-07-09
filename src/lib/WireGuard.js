@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-const fs = require("node:fs/promises");
-const path = require("path");
-const debug = require("debug")("WireGuard");
-const crypto = require("node:crypto");
-const QRCode = require("qrcode");
+const fs = require('node:fs/promises');
+const path = require('path');
+const debug = require('debug')('WireGuard');
+const crypto = require('node:crypto');
+const QRCode = require('qrcode');
 
-const Util = require("./Util");
-const ServerError = require("./ServerError");
+const Util = require('./Util');
+const ServerError = require('./ServerError');
 
 const {
   WG_PATH,
@@ -22,7 +22,7 @@ const {
   WG_PRE_UP,
   WG_POST_UP,
   WG_PRE_DOWN,
-  WG_POST_DOWN
+  WG_POST_DOWN,
 } = require("../config");
 
 module.exports = class WireGuard {
