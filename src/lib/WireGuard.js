@@ -99,7 +99,7 @@ module.exports = class WireGuard {
 # Server
 [Interface]
 PrivateKey = ${config.server.privateKey}
-Address = ${config.server.address}/${cidrSubnet}
+Address = ${config.server.address}/${config.server.cidrSubnet}
 ListenPort = ${WG_PORT}
 PreUp = ${WG_PRE_UP}
 PostUp = ${WG_POST_UP}
@@ -204,7 +204,7 @@ ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
     return `
 [Interface]
 PrivateKey = ${client.privateKey ? `${client.privateKey}` : 'REPLACE_ME'}
-Address = ${client.address}/${cidrSubnet}
+Address = ${client.address}/${client.cidrSubnet}
 ${WG_DEFAULT_DNS ? `DNS = ${WG_DEFAULT_DNS}\n` : ''}\
 ${WG_MTU ? `MTU = ${WG_MTU}\n` : ''}\
 
@@ -239,13 +239,13 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     let address;
     for (let i = 2; i < 255; i++) {
       const client = Object.values(config.clients).find((client) => {
-          let tempAddress = address.split('.');
+          let tempAddress = client.address.split('.');
           tempAddress[3]=i;
         return client.address === tempAddress.join('.');
       });
 
       if (!client) {
-        const tempAddress = address.split('.');
+        const tempAddress = client.address.split('.');
         tempAddress[3] = i;
         address = tempAddress.join('.');
         break;
@@ -253,7 +253,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     }
 
     if (!address) {
-      let tempAddress = address.split('.');
+      let tempAddress = client.address.split('.');
       tempAddress[2] = parseInt(tempAddress[2]) + 1;
       address = tempAddress.join('.');
       //throw new Error('Maximum number of clients reached.');
