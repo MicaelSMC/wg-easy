@@ -45,7 +45,13 @@ module.exports = class WireGuard {
           const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`, {
             log: 'echo ***hidden*** | wg pubkey',
           });
-          const address = WG_DEFAULT_ADDRESS.replace('x', '1');
+
+          const [ipAddress, subnetIp] = WG_DEFAULT_ADDRESS.split('/');
+          let tempAddress = ipAddress.split('.');
+          tempAddress[3]='1';
+          const address = tempAddress.join('.');
+          const cidrSubnet = subnetIp;
+          
 
           config = {
             server: {
@@ -94,7 +100,7 @@ module.exports = class WireGuard {
 # Server
 [Interface]
 PrivateKey = ${config.server.privateKey}
-Address = ${config.server.address}/16
+Address = ${config.server.address}/${cidrSubnet}
 ListenPort = ${WG_PORT}
 PreUp = ${WG_PRE_UP}
 PostUp = ${WG_POST_UP}
@@ -199,7 +205,7 @@ ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
     return `
 [Interface]
 PrivateKey = ${client.privateKey ? `${client.privateKey}` : 'REPLACE_ME'}
-Address = ${client.address}/16
+Address = ${client.address}/${cidrSubnet}
 ${WG_DEFAULT_DNS ? `DNS = ${WG_DEFAULT_DNS}\n` : ''}\
 ${WG_MTU ? `MTU = ${WG_MTU}\n` : ''}\
 
@@ -234,17 +240,25 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     let address;
     for (let i = 2; i < 255; i++) {
       const client = Object.values(config.clients).find((client) => {
-        return client.address === WG_DEFAULT_ADDRESS.replace('x', i);
+          let tempAddress = address.split('.');
+          tempAddress[3]=i;
+        return client.address === tempAddress.join('.');
       });
 
       if (!client) {
-        address = WG_DEFAULT_ADDRESS.replace('x', i);
+        let tempAddress = address.split('.');
+        tempAddress[3]=i;
+        address = tempAddress.join('.');
         break;
       }
     }
 
     if (!address) {
-      throw new Error('Maximum number of clients reached.');
+      let tempAddress = address.split('.');
+      tempAddress[2]=parseInt(tempAddress[2]) + 1;
+      address = tempAddress.join('.');
+      //throw new Error('Maximum number of clients reached.');
+      
     }
 
     // Create Client
