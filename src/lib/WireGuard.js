@@ -115,7 +115,7 @@ PostDown = ${WG_POST_DOWN}
 [Peer]
 PublicKey = ${client.publicKey}
 ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
-}AllowedIPs = ${client.address}/32`;
+        }AllowedIPs = ${client.address}/32`;
     }
 
     debug('Config saving...');
@@ -211,7 +211,7 @@ ${WG_MTU ? `MTU = ${WG_MTU}\n` : ''}\
 [Peer]
 PublicKey = ${config.server.publicKey}
 ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
-}AllowedIPs = ${WG_ALLOWED_IPS}
+      }AllowedIPs = ${WG_ALLOWED_IPS}
 PersistentKeepalive = ${WG_PERSISTENT_KEEPALIVE}
 Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
   }
@@ -238,10 +238,10 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     // Calculate next IP
     let address;
     for (let i = 2; i < 255; i++) {
-       const client = Object.values(config.clients).find((client) => {
-       const tempAddress = config.server.address.split('.');
-       tempAddress[3] = i;
-       return client.address === tempAddress.join('.');
+      const client = Object.values(config.clients).find((client) => {
+        const tempAddress = config.server.address.split('.');
+        tempAddress[3] = i;
+        return client.address === tempAddress.join('.');
       });
 
       if (!client) {
@@ -253,7 +253,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     }
 
     if (!address) {
-      throw new Error('Maximum number of clients reached.'); 
+      throw new Error('Maximum number of clients reached.');
     }
 
     // Create Client
