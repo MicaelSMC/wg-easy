@@ -47,7 +47,7 @@ module.exports = class WireGuard {
           });
 
           const [ipAddress, subnetIp] = WG_DEFAULT_ADDRESS.split('/');
-          let tempAddress = ipAddress.split('.');
+          const tempAddress = ipAddress.split('.');
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp;
@@ -239,13 +239,13 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     let address;
     for (let i = 2; i < 255; i++) {
       const client = Object.values(config.clients).find((client) => {
-          let tempAddress = client.address.split('.');
-          tempAddress[3]=i;
-        return client.address === tempAddress.join('.');
+      const tempAddress = config.server.address.split('.');
+      tempAddress[3] = i;
+      return client.address === tempAddress.join('.');
       });
 
       if (!client) {
-        const tempAddress = client.address.split('.');
+        const tempAddress = config.server.address.split('.');
         tempAddress[3] = i;
         address = tempAddress.join('.');
         break;
@@ -253,7 +253,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     }
 
     if (!address) {
-      let tempAddress = client.address.split('.');
+      const tempAddress = config.server.address.split('.');
       tempAddress[2] = parseInt(tempAddress[2]) + 1;
       address = tempAddress.join('.');
       //throw new Error('Maximum number of clients reached.');
@@ -266,6 +266,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
       id,
       name,
       address,
+      cidrSubnet,
       privateKey,
       publicKey,
       preSharedKey,
