@@ -48,7 +48,7 @@ module.exports = class WireGuard {
 
           const [ipAddress, subnetIp] = WG_DEFAULT_ADDRESS.split('/');
           let tempAddress = ipAddress.split('.');
-          tempAddress[3] ='1';
+          tempAddress[3] = '1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp;
           
@@ -247,7 +247,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
 
       if (!client) {
         const tempAddress = address.split('.');
-        tempAddress[3]=i;
+        tempAddress[3] = i;
         address = tempAddress.join('.');
         break;
       }
@@ -255,7 +255,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
 
     if (!address) {
       let tempAddress = address.split('.');
-      tempAddress[2]=parseInt(tempAddress[2]) + 1;
+      tempAddress[2] = parseInt(tempAddress[2]) + 1;
       address = tempAddress.join('.');
       //throw new Error('Maximum number of clients reached.');
       
