@@ -51,7 +51,6 @@ module.exports = class WireGuard {
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp;
-          
           config = {
             server: {
               privateKey,
@@ -142,6 +141,7 @@ ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
       name: client.name,
       enabled: client.enabled,
       address: client.address,
+      cidrSubnet: client.cidrSubnet,
       publicKey: client.publicKey,
       createdAt: new Date(client.createdAt),
       updatedAt: new Date(client.updatedAt),
@@ -238,10 +238,10 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     // Calculate next IP
     let address;
     for (let i = 2; i < 255; i++) {
-      const client = Object.values(config.clients).find((client) => {
-      const tempAddress = config.server.address.split('.');
-      tempAddress[3] = i;
-      return client.address === tempAddress.join('.');
+        const client = Object.values(config.clients).find((client) => {
+        const tempAddress = config.server.address.split('.');
+        tempAddress[3] = i;
+        return client.address === tempAddress.join('.');
       });
 
       if (!client) {
@@ -256,8 +256,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
       const tempAddress = config.server.address.split('.');
       tempAddress[2] = parseInt(tempAddress[2]) + 1;
       address = tempAddress.join('.');
-      //throw new Error('Maximum number of clients reached.');
-      
+      //throw new Error('Maximum number of clients reached.'); 
     }
 
     // Create Client
