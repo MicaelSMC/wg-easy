@@ -48,7 +48,7 @@ module.exports = class WireGuard {
 
           const [ipAddress, subnetIp] = WG_DEFAULT_ADDRESS.split('/');
           let tempAddress = ipAddress.split('.');
-          tempAddress[3]='1';
+          tempAddress[3] ='1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp;
           
@@ -246,7 +246,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
       });
 
       if (!client) {
-        let tempAddress = address.split('.');
+        const tempAddress = address.split('.');
         tempAddress[3]=i;
         address = tempAddress.join('.');
         break;
