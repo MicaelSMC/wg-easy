@@ -56,6 +56,7 @@ module.exports = class WireGuard {
               privateKey,
               publicKey,
               address,
+              cidrSubnet,
             },
             clients: {},
           };
