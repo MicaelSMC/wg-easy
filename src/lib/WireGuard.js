@@ -267,6 +267,8 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
       throw new Error('Maximum number of clients reached.');
     }
 
+    let cidrSubnet = 16;
+
     // Create Client
     const id = crypto.randomUUID();
     const client = {
