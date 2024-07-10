@@ -73,7 +73,7 @@ module.exports = class WireGuard {
             err.message.includes('Cannot find device "wg0"')
           ) {
             throw new Error(
-              'WireGuard exited with the error: Cannot find device "wg0"\nThis usually means that your host\'s kernel does not support WireGuard!'
+              'WireGuard exited with the error: Cannot find device "wg0"\nThis usually means that your host\'s kernel does not support WireGuard!',
             );
           }
 
@@ -150,7 +150,7 @@ ${client.preSharedKey
   async getClients() {
     const config = await this.getConfig();
     const clients = Object.entries(
-      config.clients
+      config.clients,
     ).map(([clientId, client]) => ({
       id: clientId,
       name: client.name,
@@ -165,12 +165,12 @@ ${client.preSharedKey
       persistentKeepalive: null,
       latestHandshakeAt: null,
       transferRx: null,
-      transferTx: null
+      transferTx: null,
     }));
 
     // Loop WireGuard status
     const dump = await Util.exec('wg show wg0 dump', {
-      log: false
+      log: false,
     });
     dump.trim().split('\n').slice(1).forEach(line => {
       const [
