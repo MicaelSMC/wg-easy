@@ -252,27 +252,25 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
 
     // Calculate next IP
     let address;
-    for (let j = 0; j < 255; j++){
-      for (let i = 2; i < 255; i++) {
-        const client = Object.values(config.clients).find(client => {
-          const tempAddress = config.server.address.split('.');
-          tempAddress[2] = j;
-          tempAddress[3] = i;
-          return client.address === tempAddress.join('.');
-        });
+    let subnet = config.server.address.split('.')[2];
+    for (let i = 2; i < 255; i++) {
+      const client = Object.values(config.clients).find(client => {
+        const tempAddress = config.server.address.split('.');
+        tempAddress[3] = i;
+        return client.address === tempAddress.join('.');
+      });
 
-        if (!client) {
-          const tempAddress = config.server.address.split('.');
-          tempAddress[2] = j;
-          tempAddress[3] = i;
-          address = tempAddress.join('.');
-          break;
-        }
+      if (!client) {
+        const tempAddress = config.server.address.split('.');
+        tempAddress[3] = i;
+        address = tempAddress.join('.');
+        break;
       }
     }
 
-    if (!address) {
-      throw new Error('Maximum number of clients reached.');
+    if (i === 254) {
+      i = 2;
+      subnet++;
     }
 
     // Create Client
