@@ -26,7 +26,6 @@ const {
 } = require('../config');
 
 module.exports = class WireGuard {
-
   async getConfig() {
     if (!this.__configPromise) {
       this.__configPromise = Promise.resolve().then(async () => {
@@ -39,19 +38,20 @@ module.exports = class WireGuard {
         try {
           config = await fs.readFile(path.join(WG_PATH, 'wg0.json'), 'utf8');
           config = JSON.parse(config);
-          debug('Configuration loaded.');
+          debug('Configuration loaded.')
         } catch (err) {
           const privateKey = await Util.exec('wg genkey');
           const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`, {
-            log: 'echo ***hidden*** | wg pubkey',
+            log: 'echo ***hidden*** | wg pubkey'
           });
 
           const [ipAddress, subnetIp] = WG_DEFAULT_ADDRESS.split('/');
           const tempAddress = ipAddress.split('.');
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
-          const cidrSubnet = subnetIp.toString();
-          
+          const cidrSubnet = subnetIp;
+          debug(cidrSubnet);
+          debug(address);
           config = {
             server: {
               privateKey,
@@ -59,8 +59,9 @@ module.exports = class WireGuard {
               address,
               cidrSubnet,
             },
-            clients: {},
+            clients: {}
           };
+          
           debug('Configuration generated.');
         }
 
@@ -68,10 +69,12 @@ module.exports = class WireGuard {
         await Util.exec('wg-quick down wg0').catch(() => {});
         await Util.exec('wg-quick up wg0').catch(err => {
           if (
-            err && err.message && err.message.includes('Cannot find device "wg0"')
+            err &&
+            err.message &&
+            err.message.includes('Cannot find device "wg0"')
           ) {
             throw new Error(
-              'WireGuard exited with the error: Cannot find device "wg0"\nThis usually means that your host\'s kernel does not support WireGuard!',
+              'WireGuard exited with the error: Cannot find device "wg0"\nThis usually means that your host\'s kernel does not support WireGuard!'
             );
           }
 
@@ -130,11 +133,11 @@ ${client.preSharedKey
       path.join(WG_PATH, 'wg0.json'),
       JSON.stringify(config, false, 2),
       {
-        mode: 0o660,
-      },
+        mode: 0o660
+      }
     );
     await fs.writeFile(path.join(WG_PATH, 'wg0.conf'), result, {
-      mode: 0o600,
+      mode: 0o600
     });
     debug('Config saved.');
   }
@@ -148,7 +151,7 @@ ${client.preSharedKey
   async getClients() {
     const config = await this.getConfig();
     const clients = Object.entries(
-      config.clients,
+      config.clients
     ).map(([clientId, client]) => ({
       id: clientId,
       name: client.name,
@@ -163,12 +166,12 @@ ${client.preSharedKey
       persistentKeepalive: null,
       latestHandshakeAt: null,
       transferRx: null,
-      transferTx: null,
+      transferTx: null
     }));
 
     // Loop WireGuard status
     const dump = await Util.exec('wg show wg0 dump', {
-      log: false,
+      log: false
     });
     dump.trim().split('\n').slice(1).forEach(line => {
       const [
@@ -260,13 +263,14 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
         tempAddress[3] = i;
         address = tempAddress.join('.');
         break;
-    
       }
     }
 
     if (!address) {
       throw new Error('Maximum number of clients reached.');
     }
+
+    //let cidrSubnet = 16;
 
     // Create Client
     const id = crypto.randomUUID();
