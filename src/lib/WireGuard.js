@@ -38,11 +38,11 @@ module.exports = class WireGuard {
         try {
           config = await fs.readFile(path.join(WG_PATH, 'wg0.json'), 'utf8');
           config = JSON.parse(config);
-          debug('Configuration loaded.')
+          debug('Configuration loaded.');
         } catch (err) {
           const privateKey = await Util.exec('wg genkey');
           const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`, {
-            log: 'echo ***hidden*** | wg pubkey'
+            log: 'echo ***hidden*** | wg pubkey',
           });
 
           const [ipAddress, subnetIp] = WG_DEFAULT_ADDRESS.split('/');
@@ -57,9 +57,8 @@ module.exports = class WireGuard {
               address,
               cidrSubnet,
             },
-            clients: {}
+            clients: {},
           };
-          
           debug('Configuration generated.');
         }
 
