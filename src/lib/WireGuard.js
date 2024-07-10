@@ -38,9 +38,7 @@ module.exports = class WireGuard {
         try {
           config = await fs.readFile(path.join(WG_PATH, 'wg0.json'), 'utf8');
           config = JSON.parse(config);
-          debug('Configuration loaded.');
-          debug(cidrSubnet);
-          debug(address);
+          debug('Configuration loaded.')
         } catch (err) {
           const privateKey = await Util.exec('wg genkey');
           const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`, {
@@ -51,9 +49,7 @@ module.exports = class WireGuard {
           const tempAddress = ipAddress.split('.');
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
-          const cidrSubnet = subnetIp;
-          debug(cidrSubnet);
-          debug(address);
+          const cidrSubnet = subnetIp.toString();
           config = {
             server: {
               privateKey,
@@ -109,7 +105,7 @@ module.exports = class WireGuard {
 # Server
 [Interface]
 PrivateKey = ${config.server.privateKey}
-Address = ${config.server.address}/16
+Address = ${config.server.address}/${config.server.cidrSubnet}
 ListenPort = ${WG_PORT}
 PreUp = ${WG_PRE_UP}
 PostUp = ${WG_POST_UP}
@@ -219,7 +215,7 @@ ${client.preSharedKey
     return `
 [Interface]
 PrivateKey = ${client.privateKey ? `${client.privateKey}` : 'REPLACE_ME'}
-Address = ${client.address}/16
+Address = ${client.address}/${client.cidrSubnet}
 ${WG_DEFAULT_DNS ? `DNS = ${WG_DEFAULT_DNS}\n` : ''}\
 ${WG_MTU ? `MTU = ${WG_MTU}\n` : ''}\
 
@@ -253,26 +249,28 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
 
     // Calculate next IP
     let address;
-    for (let i = 2; i < 255; i++) {
-      const client = Object.values(config.clients).find(client => {
-        const tempAddress = config.server.address.split('.');
-        tempAddress[3] = i;
-        return client.address === tempAddress.join('.');
-      });
-
-      if (!client) {
-        const tempAddress = config.server.address.split('.');
-        tempAddress[3] = i;
-        address = tempAddress.join('.');
-        break;
+    for (let j =0; j < 255; j++) {
+      for (let i = 2; i < 255; i++) {
+        const client = Object.values(config.clients).find(client => {
+          const tempAddress = config.server.address.split('.');
+          tempAddress[2] = j;
+          tempAddress[3] = i;
+          return client.address === tempAddress.join('.');
+        });
+  
+        if (!client) {
+          const tempAddress = config.server.address.split('.');
+          tempAddress[3] = i;
+          address = tempAddress.join('.');
+          break;
+        }
       }
     }
+    
 
     if (!address) {
       throw new Error('Maximum number of clients reached.');
     }
-
-    let cidrSubnet = 16;
 
     // Create Client
     const id = crypto.randomUUID();
