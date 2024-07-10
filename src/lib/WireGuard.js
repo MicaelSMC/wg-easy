@@ -268,12 +268,13 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
         address = tempAddress.join('.');
         break;
       }
+      if (i === 254) {
+        i = 1;
+        subnet++;
+      }
     }
 
-    if (i === 254) {
-      i = 2;
-      subnet++;
-    }
+   
 
     // Create Client
     const id = crypto.randomUUID();
