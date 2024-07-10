@@ -252,7 +252,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
 
     // Calculate next IP
     let address;
-    for (let j = 0; j < 255; j++)
+    for (let j = 0; j < 255; j++){
       for (let i = 2; i < 255; i++) {
         const client = Object.values(config.clients).find(client => {
           const tempAddress = config.server.address.split('.');
