@@ -26,6 +26,7 @@ const {
 } = require('../config');
 
 module.exports = class WireGuard {
+
   async getConfig() {
     if (!this.__configPromise) {
       this.__configPromise = Promise.resolve().then(async () => {
@@ -50,6 +51,7 @@ module.exports = class WireGuard {
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp.toString();
+          
           config = {
             server: {
               privateKey,
