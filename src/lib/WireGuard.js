@@ -39,8 +39,7 @@ module.exports = class WireGuard {
           config = await fs.readFile(path.join(WG_PATH, 'wg0.json'), 'utf8');
           config = JSON.parse(config);
           debug('Configuration loaded.');
-          debug(cidrSubnet);
-          debug(address);
+
         } catch (err) {
           const privateKey = await Util.exec('wg genkey');
           const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`, {
@@ -52,8 +51,7 @@ module.exports = class WireGuard {
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp;
-          debug(cidrSubnet);
-          debug(address);
+
           config = {
             server: {
               privateKey,
@@ -250,6 +248,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     const privateKey = await Util.exec('wg genkey');
     const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`);
     const preSharedKey = await Util.exec('wg genpsk');
+    const cidrSubnet = config.server.cidrSubnet;
 
     // Calculate next IP
     let address;
@@ -271,8 +270,6 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     if (!address) {
       throw new Error('Maximum number of clients reached.');
     }
-
-    let cidrSubnet = 16;
 
     // Create Client
     const id = crypto.randomUUID();
