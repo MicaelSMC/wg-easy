@@ -50,7 +50,7 @@ module.exports = class WireGuard {
           tempAddress[3] = '1';
           const address = tempAddress.join('.');
           const cidrSubnet = subnetIp;
-          console.log(cidrSubnet);
+          debug(cidrSubnet);
           config = {
             server: {
               privateKey,
