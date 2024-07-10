@@ -256,12 +256,14 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     for (let i = 2; i < 255; i++) {
       const client = Object.values(config.clients).find(client => {
         const tempAddress = config.server.address.split('.');
+        tempAddress[2] = subnet;
         tempAddress[3] = i;
         return client.address === tempAddress.join('.');
       });
 
       if (!client) {
         const tempAddress = config.server.address.split('.');
+        tempAddress[2] = subnet;
         tempAddress[3] = i;
         address = tempAddress.join('.');
         break;
