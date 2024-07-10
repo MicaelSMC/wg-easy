@@ -68,9 +68,7 @@ module.exports = class WireGuard {
         await Util.exec('wg-quick down wg0').catch(() => {});
         await Util.exec('wg-quick up wg0').catch(err => {
           if (
-            err &&
-            err.message &&
-            err.message.includes('Cannot find device "wg0"')
+            err && err.message && err.message.includes('Cannot find device "wg0"')
           ) {
             throw new Error(
               'WireGuard exited with the error: Cannot find device "wg0"\nThis usually means that your host\'s kernel does not support WireGuard!',
@@ -261,6 +259,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
   
         if (!client) {
           const tempAddress = config.server.address.split('.');
+          tempAddress[2] = j;
           tempAddress[3] = i;
           address = tempAddress.join('.');
           break;
