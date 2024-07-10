@@ -38,7 +38,9 @@ module.exports = class WireGuard {
         try {
           config = await fs.readFile(path.join(WG_PATH, 'wg0.json'), 'utf8');
           config = JSON.parse(config);
-          debug('Configuration loaded.')
+          debug('Configuration loaded.');
+          debug(cidrSubnet);
+          debug(address);
         } catch (err) {
           const privateKey = await Util.exec('wg genkey');
           const publicKey = await Util.exec(`echo ${privateKey} | wg pubkey`, {
@@ -270,7 +272,7 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
       throw new Error('Maximum number of clients reached.');
     }
 
-    //let cidrSubnet = 16;
+    let cidrSubnet = 16;
 
     // Create Client
     const id = crypto.randomUUID();
